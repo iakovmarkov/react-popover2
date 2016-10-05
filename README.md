@@ -5,7 +5,7 @@ littlebits/react-popover successor.
 ## Installation
 
 ```
-npm install --save react-popover
+npm install --save react-popover2
 ```
 
 ## API
