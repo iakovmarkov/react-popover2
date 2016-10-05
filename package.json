@@ -27,7 +27,7 @@
   "author": "TorchUp <torchupteam@gmail.com>",
   "name": "react-popover2",
   "homepage": "https://github.com/torchup/react-popover2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "description": "react-popover's successor",
   "devDependencies": {
