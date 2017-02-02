@@ -26,6 +26,16 @@ Determines Whether or not the popover is rendered.
 
 ---
 
+##### `className :: String`
+Determines component Module Name for BEM-Style classes
+
+---
+
+##### `modifiers :: String | Array String`
+Determines component Modifiers for BEM-Style classes
+
+---
+
 ##### `preferPlace :: Enum String | Null`
 Sets a ***preference*** of where to position the Popover. Only useful to specify placement in case of multiple available fits. Defaults to `null`. Valid values are:
 
@@ -49,12 +59,6 @@ A callback function executed every time the user does an action (`mousedown` or 
 
 ##### `refreshIntervalMs :: Number | Falsey`
 The polling speed (AKA time between each poll) in milliseconds for checking if a layout refresh is required. This polling is required because it is the only robust way to track the position of a target in the DOM. Defaults to `200`. Set to a falsey value to disable.
-
----
-
-##### Standard
-
-* Properties like `className` and `style`.
 
 
 ---
