@@ -9,14 +9,26 @@ import { isServer, window } from './platform'
 import { arrayify, clientOnly } from './utils'
 import Tip from './tip'
 
-const be = (moduleName, elementName, modifiers) => {
+const be = (moduleName, elementName, modifiers = []) => {
     let className = elementName ? `${moduleName}-${elementName}` : `${moduleName}`;
 
-    if (modifiers && modifiers.length) {
+    if (modifiers.length) {
         className = modifiers.filter(x => x).reduce((acc, modifier) => `${acc} ${className}--${modifier}`, className);
     }
 
     return className;
+}
+
+const toArray = value => {
+    if (Array.isArray(value)) {
+        return value;
+    }
+
+    if (typeof value === 'string') {
+        return value.split(' ');
+    }
+
+    return value;
 }
 
 const supportedCSSValue = clientOnly(cssVendor.supportedValue)
@@ -395,7 +407,7 @@ const Popover = createClass({
     const { standing } = this.state;
 
     const popoverProps = {
-      className: be(className, null, [standing, isOpen ? 'isOpen' : null].concat(modifiers)),
+      className: be(className, null, [standing, isOpen ? 'isOpen' : null].concat(toArray(modifiers))),
       style: { ...coreStyle, ...style }
     }
 
@@ -416,7 +428,7 @@ const Popover = createClass({
     const { className = ``, style = {}, modifiers = ``, isOpen} = this.props;
     const { standing } = this.state;
 
-    return E.div({ className: be(className, 'trigger', [standing, isOpen ? 'isOpen' : null].concat(modifiers)) }, this.props.children)
+    return E.div({ className: be(className, 'trigger', [standing, isOpen ? 'isOpen' : null].concat(toArray(modifiers))) }, this.props.children)
   },
 })
 
