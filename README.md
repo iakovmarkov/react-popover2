@@ -12,6 +12,16 @@ npm install --save ataccama/react-popover2
 yarn add ataccama/react-popover2
 ```
 
+If you want to install already pre-build version, use `dist` branch:
+
+```
+npm install --save ataccama/react-popover2#dist
+```
+
+```
+yarn add ataccama/react-popover2#dist
+```
+
 ## This fork
 
 This fork makes use of BEM-style class names. A new prop `className` sets the base Block Name, with elements being named `body` and `trigger`. It also supports a `modifiers` prop, which is an array of strings that will be added to BEM class.
