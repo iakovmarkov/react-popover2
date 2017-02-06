@@ -9,6 +9,27 @@ import { isServer, window } from './platform'
 import { arrayify, clientOnly } from './utils'
 import Tip from './tip'
 
+const be = (moduleName, elementName, modifiers = []) => {
+    let className = elementName ? `${moduleName}-${elementName}` : `${moduleName}`;
+
+    if (modifiers.length) {
+        className = modifiers.filter(x => x).reduce((acc, modifier) => `${acc} ${className}--${modifier}`, className);
+    }
+
+    return className;
+}
+
+const toArray = value => {
+    if (Array.isArray(value)) {
+        return value;
+    }
+
+    if (typeof value === 'string') {
+        return value.split(' ');
+    }
+
+    return value;
+}
 
 const supportedCSSValue = clientOnly(cssVendor.supportedValue)
 
@@ -50,8 +71,6 @@ const flowToPopoverTranslations = {
   column: `translateY`,
 }
 
-
-
 const Popover = createClass({
   displayName: `popover`,
   propTypes: {
@@ -84,7 +103,7 @@ const Popover = createClass({
   },
   getInitialState () {
     return {
-      standing: `above`,
+      standing: `below`,
       exited: !this.props.isOpen, // for animation-dependent rendering, should popover close/open?
       exiting: false, // for tracking in-progress animations
       toggle: false, // for business logic tracking, should popover close/open?
@@ -225,31 +244,6 @@ const Popover = createClass({
 
     this.containerEl.style.top = `${pos.y}px`
     this.containerEl.style.left = `${pos.x}px`
-
-    /* Calculate Tip Position */
-
-    let tipCrossPos = (
-      /* Get the absolute tipCrossCenter. Tip is positioned relative to containerEl
-      but it aims at targetCenter which is positioned relative to frameEl... we
-      need to cancel the containerEl positioning so as to hit our intended position. */
-      Layout.centerOfBoundsFromBounds(zone.flow, `cross`, tb, pos)
-
-      /* centerOfBounds does not account for scroll so we need to manually add that
-      here. */
-      + scrollSize.cross
-
-      /* Center tip relative to self. We do not have to calcualte half-of-tip-size since tip-size
-      specifies the length from base to tip which is half of total length already. */
-      - this.props.tipSize
-    )
-
-    if (tipCrossPos < dockingEdgeBufferLength) tipCrossPos = dockingEdgeBufferLength
-    else if (tipCrossPos > (pos.crossLength - dockingEdgeBufferLength) - this.props.tipSize * 2) {
-      tipCrossPos = (pos.crossLength - dockingEdgeBufferLength) - this.props.tipSize * 2
-    }
-
-    this.tipEl.style.transform = `${flowToTipTranslations[zone.flow]}(${tipCrossPos}px)`
-    this.tipEl.style[jsprefix(`Transform`)] = this.tipEl.style.transform
   },
   checkTargetReposition () {
     if (this.measureTargetBounds()) this.resolvePopoverLayout()
@@ -312,8 +306,6 @@ const Popover = createClass({
     /* Hack: http://stackoverflow.com/questions/3485365/how-can-i-force-webkit-to-redraw-repaint-to-propagate-style-changes */
     this.containerEl.offsetHeight
 
-    this.tipEl.style.transition = `transform 150ms ease-in`
-    this.tipEl.style[jsprefix(`Transition`)] = `${cssprefix(`transform`)} 150ms ease-in`
     this.containerEl.style.transitionProperty = `top, left, opacity, transform`
     this.containerEl.style.transitionDuration = `500ms`
     this.containerEl.style.transitionTimingFunction = `cubic-bezier(0.230, 1.000, 0.320, 1.000)`
@@ -322,14 +314,14 @@ const Popover = createClass({
     this.containerEl.style[jsprefix(`Transform`)] = this.containerEl.style.transform
   },
   trackPopover () {
+    const { className } = this.props;
     const minScrollRefreshIntervalMs = 200
     const minResizeRefreshIntervalMs = 200
 
     /* Get references to DOM elements. */
 
     this.containerEl = findDOMNode(this.layerReactComponent)
-    this.bodyEl = this.containerEl.querySelector(`.Popover-body`)
-    this.tipEl = this.containerEl.querySelector(`.Popover-tip`)
+    this.bodyEl = this.containerEl.querySelector(`.${be(className, 'body')}`)
 
     /* Note: frame is hardcoded to window now but we think it will
     be a nice feature in the future to allow other frames to be used
@@ -411,16 +403,12 @@ const Popover = createClass({
   renderLayer () {
     if (this.state.exited) return null
 
-    const { className = ``, style = {}} = this.props
+    const { className = ``, style = {}, modifiers = ``, isOpen} = this.props;
+    const { standing } = this.state;
 
     const popoverProps = {
-      className: `Popover ${className}`,
+      className: be(className, null, [standing, isOpen ? 'isOpen' : null].concat(toArray(modifiers))),
       style: { ...coreStyle, ...style }
-    }
-
-    const tipProps = {
-      direction: faces[this.state.standing],
-      size: this.props.tipSize,
     }
 
     /* If we pass array of nodes to component children React will complain that each
@@ -432,13 +420,15 @@ const Popover = createClass({
 
     return (
       E.div(popoverProps,
-        E.div({ className: `Popover-body` }, ...popoverBody),
-        createElement(Tip, tipProps)
+        E.div({ className: be(className, 'body') }, ...popoverBody),
       )
     )
   },
   render () {
-    return this.props.children
+    const { className = ``, style = {}, modifiers = ``, isOpen} = this.props;
+    const { standing } = this.state;
+
+    return E.div({ className: be(className, 'trigger', [standing, isOpen ? 'isOpen' : null].concat(toArray(modifiers))) }, this.props.children)
   },
 })
 
