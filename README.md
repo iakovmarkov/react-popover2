@@ -5,8 +5,18 @@ littlebits/react-popover successor.
 ## Installation
 
 ```
-npm install --save react-popover2
+npm install --save ataccama/react-popover2
 ```
+
+```
+yarn add ataccama/react-popover2
+```
+
+## This fork
+
+This fork makes use of BEM-style class names. A new prop `className` sets the base Block Name, with elements being named `body` and `trigger`. It also supports a `modifiers` prop, which is an array of strings that will be added to BEM class.
+
+We've also removed the triangle (tip) on the popover. We'd rather create this with CSS.
 
 ## API
 
