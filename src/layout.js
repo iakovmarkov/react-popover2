@@ -76,6 +76,7 @@ const place = (flow, axis, align, bounds, size) => {
 
 const El = {}
 
+/* calculates position of the parent element*/
 El.calcBounds = (el) => {
 
   if (el === window) {
@@ -223,11 +224,12 @@ const pickZone = (opts, frameBounds, targetBounds, size) => {
 }
 
 
-
 /* TODO Document this. */
 
+/* calculates position of the body element */
 const calcRelPos = (zone, masterBounds, slaveSize) => {
   const { main, cross } = axes[zone.flow]
+
   /* TODO: The slave is hard-coded to align cross-center with master. */
   const crossAlign = `center`
   const mainStart = place(zone.flow, `main`, zone.side, masterBounds, slaveSize)

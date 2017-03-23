@@ -39,6 +39,13 @@ We've also removed the triangle (tip) on the popover. We'd rather create this wi
 ##### `body :: Node | Array Node`
 The `popover` content. Content is rooted (becomes children of) `.Popover-body` and thus `body` can be a single `node` _or an array of `nodes`_.
 
+
+---
+
+##### `parent :: Node`
+Sets the parent element of the body attribute.
+
+
 ---
 
 ##### `isOpen :: Boolean`
