@@ -86,7 +86,7 @@ const Popover = createClass({
     enterExitTransitionDurationMs: T.number,
     className: T.string,
     style: T.object,
-    parent: T.node,
+    parent: T.instanceOf(Element),
   },
   mixins: [ReactLayerMixin()],
   getDefaultProps () {
