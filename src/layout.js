@@ -227,7 +227,7 @@ const pickZone = (opts, frameBounds, targetBounds, size) => {
 /* TODO Document this. */
 
 /* calculates position of the body element */
-const calcRelPos = (zone, masterBounds, slaveSize, parent) => {
+const calcRelPos = (zone, masterBounds, slaveSize) => {
   const { main, cross } = axes[zone.flow]
 
   /* TODO: The slave is hard-coded to align cross-center with master. */

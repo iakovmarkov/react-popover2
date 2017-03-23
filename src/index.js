@@ -86,7 +86,7 @@ const Popover = createClass({
     enterExitTransitionDurationMs: T.number,
     className: T.string,
     style: T.object,
-    parent: T.object,
+    parent: T.node,
   },
   mixins: [ReactLayerMixin()],
   getDefaultProps () {
@@ -385,12 +385,11 @@ const Popover = createClass({
   untrackPopover () {
     clearInterval(this.checkLayoutInterval)
     this.frameEl.removeEventListener(`scroll`, this.onFrameScroll)
-    this.props.parent && (document.querySelector('.AutocompleteField-body').style.display = 'none')
+    this.props.parent && (this.bodyEl.style.display = 'none')
     resizeEvent.off(this.frameEl, this.onFrameResize)
     resizeEvent.off(this.containerEl, this.onPopoverResize)
     resizeEvent.off(this.targetEl, this.onTargetResize)
     window.removeEventListener(`mousedown`, this.checkForOuterAction)
-    window.removeEventListener(`touchstart`, this.checkForOuterAction)
     window.removeEventListener(`touchstart`, this.checkForOuterAction)
   },
   onTargetResize () {
