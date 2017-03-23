@@ -86,6 +86,7 @@ const Popover = createClass({
     enterExitTransitionDurationMs: T.number,
     className: T.string,
     style: T.object,
+    parent: T.object,
   },
   mixins: [ReactLayerMixin()],
   getDefaultProps () {
@@ -234,7 +235,6 @@ const Popover = createClass({
     of the container. When tip changes orientation position due to changes from/to `row`/`column`
     width`/`height` will be impacted. Our layout monitoring will catch these cases and automatically
     recalculate layout. */
-
     this.containerEl.style.flexFlow = zone.flow
     this.containerEl.style[jsprefix(`FlexFlow`)] = this.containerEl.style.flexFlow
     this.bodyEl.style.order = zone.order
@@ -242,8 +242,18 @@ const Popover = createClass({
 
     /* Apply Absolute Positioning. */
 
-    this.containerEl.style.top = `${pos.y}px`
-    this.containerEl.style.left = `${pos.x}px`
+	  if (this.props.parent) {
+			const parentOffset = this.props.parent.getBoundingClientRect()
+			this.bodyEl.style.top = `${pos.y}px`
+			this.bodyEl.style.left = `${pos.x}px`
+			this.containerEl.style.width = `${parentOffset.width}px`
+			this.containerEl.style.marginTop = `${parentOffset.height}px`
+			this.containerEl.style.zIndex = 1
+		}
+		else {
+      this.containerEl.style.top = `${pos.y}px`
+      this.containerEl.style.left = `${pos.x}px`
+		}
   },
   checkTargetReposition () {
     if (this.measureTargetBounds()) this.resolvePopoverLayout()
@@ -327,7 +337,7 @@ const Popover = createClass({
     be a nice feature in the future to allow other frames to be used
     such as local elements that further constrain the popover`s world. */
 
-    this.frameEl = window
+    this.frameEl = this.props.parent || window
     this.hasTracked = true
 
     /* Set a general interval for checking if target position changed. There is no way
@@ -375,10 +385,12 @@ const Popover = createClass({
   untrackPopover () {
     clearInterval(this.checkLayoutInterval)
     this.frameEl.removeEventListener(`scroll`, this.onFrameScroll)
-    resizeEvent.off(this.frameEl, this.onFrameResize)
+		this.props.parent && (document.querySelector('.AutocompleteField-body').style.display = 'none')
+		resizeEvent.off(this.frameEl, this.onFrameResize)
     resizeEvent.off(this.containerEl, this.onPopoverResize)
     resizeEvent.off(this.targetEl, this.onTargetResize)
     window.removeEventListener(`mousedown`, this.checkForOuterAction)
+    window.removeEventListener(`touchstart`, this.checkForOuterAction)
     window.removeEventListener(`touchstart`, this.checkForOuterAction)
   },
   onTargetResize () {

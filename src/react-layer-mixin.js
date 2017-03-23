@@ -11,11 +11,11 @@ import { isClient } from './platform'
 const createElement = (x) =>
   isClient ? document.createElement(x) : noop
 
-const bodyAppendElement = (x) =>
-  isClient ? document.body.appendChild(x) : noop
+const bodyAppendElement = (x, parent = document.body) =>
+  isClient ? parent.appendChild(x) : noop
 
-const bodyRemoveElement = (x) =>
-  isClient ? document.body.removeChild(x) : noop
+const bodyRemoveElement = (x, parent = document.body) =>
+  isClient ? parent.removeChild(x) : noop
 
 
 
@@ -27,7 +27,7 @@ const ReactLayerMixin = () => ({
   },
   componentDidMount () {
     /* Mount the mount. */
-    bodyAppendElement(this.layerContainerNode)
+    bodyAppendElement(this.layerContainerNode, this.props.parent)
     this._layerRender()
   },
   componentDidUpdate () {
@@ -36,7 +36,7 @@ const ReactLayerMixin = () => ({
   componentWillUnmount () {
     this._layerUnrender()
     /* Unmount the mount. */
-    bodyRemoveElement(this.layerContainerNode)
+    bodyRemoveElement(this.layerContainerNode, this.props.parent)
   },
   _layerRender () {
     const layerReactEl = this.renderLayer()
